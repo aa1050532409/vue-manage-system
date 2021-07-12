@@ -47,6 +47,9 @@
         }
       }
     },
+    mounted() {
+      this.getLoginCookie()
+    },
     methods: {
       login() {
         this.$refs.loginFormRef.validate((valid) => {
@@ -60,6 +63,10 @@
               if (res.data.meta.status === 200) {
                 this.$message.success('登录成功！')
                 window.sessionStorage.setItem("token", res.data.data.token)
+
+                this.$cookies.set('username', this.loginForm.username, 3600*12)
+                this.$cookies.set('password', this.loginForm.password, 3600*12)
+
                 this.$router.push("/home")
               } else if (res.data.meta.status === 400) {
                 return this.$message.error('登录失败！')
@@ -70,6 +77,12 @@
       },
       resetLoginForm(formName) {
         this.$refs[formName].resetFields()
+      },
+      getLoginCookie() {
+        const username = this.$cookies.get('username')
+        const password = this.$cookies.get('password')
+        this.loginForm.username = username
+        this.loginForm.password = password
       }
     }
   }
